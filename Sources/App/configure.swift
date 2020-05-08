@@ -41,7 +41,9 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     migrations.add(model: User.self, database: DatabaseIdentifier<User.Database>.mysql)
     migrations.add(model: UserToken.self, database: DatabaseIdentifier<UserToken.Database>.mysql)
-    migrations.add(model: Todo.self, database: DatabaseIdentifier<Todo.Database>.mysql)
+    migrations.add(model: Challenge.self, database: DatabaseIdentifier<Challenge.Database>.mysql)
+    migrations.add(model: UserRaisedToChallenge.self, database: DatabaseIdentifier<UserRaisedToChallenge.Database>.mysql)
+    migrations.add(model: ChallengeToUser.self, database: DatabaseIdentifier<ChallengeToUser.Database>.mysql)
     services.register(migrations)
 
 }

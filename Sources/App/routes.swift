@@ -10,5 +10,5 @@ public func routes(_ router: Router) throws {
     
     // bearer / token auth protected routes
     let bearer = router.grouped(User.tokenAuthMiddleware())
-    try bearer.register(collection: TodoController())
+    try bearer.register(collection: ChallengeController())
 }

@@ -2,22 +2,17 @@ import Authentication
 import FluentMySQL
 import Vapor
 
-/// A registered user, capable of owning todo items.
 final class User: MySQLModel {
-    /// User's unique identifier.
     /// Can be `nil` if the user has not been saved yet.
     var id: Int?
     
-    /// User's full name.
     var name: String
     
-    /// User's email address.
     var email: String
     
     /// BCrypt hash of the user's password.
     var passwordHash: String
     
-    /// Creates a new `User`.
     init(id: Int? = nil, name: String, email: String, passwordHash: String) {
         self.id = id
         self.name = name
@@ -26,6 +21,11 @@ final class User: MySQLModel {
     }
 }
 
+extension User {
+    var challanges: Siblings<User, Challenge, ChallengeToUser> {
+        return siblings()
+    }
+}
 /// Allows users to be verified by basic / password auth middleware.
 extension User: PasswordAuthenticatable {
     /// See `PasswordAuthenticatable`.
