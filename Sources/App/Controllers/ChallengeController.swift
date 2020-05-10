@@ -1,9 +1,8 @@
 import Vapor
 import FluentMySQL
 
-/// Simple todo-list controller.
 final class ChallengeController {
-    /// Returns a list of all todos for the auth'd user.
+    
     func index(_ req: Request) throws -> Future<[Challenge]> {
         // fetch auth'd user
         let user = try req.requireAuthenticated(User.self)
@@ -11,18 +10,28 @@ final class ChallengeController {
         return try user.challanges.query(on: req).all()
     }
     
-//    /// Creates a new todo for the auth'd user.
-//    func create(_ req: Request) throws -> Future<Todo> {
-//        // fetch auth'd user
-//        let user = try req.requireAuthenticated(User.self)
-//        
-//        // decode request content
-//        return try req.content.decode(CreateTodoRequest.self).flatMap { todo in
-//            // save new todo
-//            return try Todo(title: todo.title, userID: user.requireID())
-//                .save(on: req)
-//        }
-//    }
+    func create(_ req: Request) throws -> Future<Challenge> {
+        // fetch auth'd user
+        let user = try req.requireAuthenticated(User.self)
+        
+        // decode request content
+        return try req.content.decode(CreateChallengeRequest.self).flatMap { challengeRequest in
+            // save new challenge
+            let challengeDO = Challenge(goalTitle: challengeRequest.goalTitle,
+                                        numberToAchieve: challengeRequest.numberToAchieve,
+                                        finishDate: challengeRequest.finishDate,
+                                        startDate: challengeRequest.startDate)
+            return challengeDO.create(on: req).map { chall in
+                for userId in challengeRequest.usersIds {
+                    User.find(userId, on: req).map { foundUser in
+                        return foundUser?.challanges.attach(chall, on: req)
+                    }
+                }
+                user.challanges.attach(chall, on: req)
+                return chall
+            }
+        }
+    }
 //
 //    /// Deletes an existing todo for the auth'd user.
 //    func delete(_ req: Request) throws -> Future<HTTPStatus> {
@@ -45,15 +54,25 @@ final class ChallengeController {
 extension ChallengeController: RouteCollection {
     func boot(router: Router) throws {
         router.get("challenges", use: index)
-//        router.post("challenge", use: create)
+        router.post("challenge", use: create)
 //        router.delete("challenge", Challenge.parameter, use: delete)
     }
 }
 
 // MARK: Content
 
-/// Represents data required to create a new todo.
-//struct CreateTodoRequest: Content {
-//    /// Todo title.
-//    var title: String
-//}
+struct CreateChallengeRequest: Content {
+    var goalTitle: String
+    var numberToAchieve: Int
+    var finishDate: Date
+    var startDate: Date
+    var usersIds: [Int]
+    
+    private enum CodingKeys : String, CodingKey {
+        case goalTitle = "goal_title"
+        case numberToAchieve = "number_to_achieve"
+        case finishDate = "finish_date"
+        case startDate = "start_date"
+        case usersIds = "users_ids"
+    }
+}

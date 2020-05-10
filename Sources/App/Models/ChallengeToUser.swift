@@ -32,3 +32,9 @@ extension ChallengeToUser: Migration {
         }
     }
 }
+
+extension ChallengeToUser: ModifiablePivot {
+    convenience init(_ left: Challenge, _ right: User) throws {
+        self.init(challengeID: try left.requireID(), userID: try right.requireID())
+    }
+}
