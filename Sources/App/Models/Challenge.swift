@@ -36,8 +36,8 @@ extension Challenge: Migration {
             builder.field(for: \.goalTitle)
             builder.field(for: \.numberToAchieve)
             builder.field(for: \.numberCompleted)
-            builder.field(for: \.finishDate)
-            builder.field(for: \.startDate)
+            builder.field(for: \.finishDate, type: .datetime)
+            builder.field(for: \.startDate, type: .datetime)
         }
     }
 }

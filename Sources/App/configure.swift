@@ -44,6 +44,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Challenge.self, database: DatabaseIdentifier<Challenge.Database>.mysql)
     migrations.add(model: UserRaisedToChallenge.self, database: DatabaseIdentifier<UserRaisedToChallenge.Database>.mysql)
     migrations.add(model: ChallengeToUser.self, database: DatabaseIdentifier<ChallengeToUser.Database>.mysql)
+    migrations.add(model: UserFriend.self, database: DatabaseIdentifier<UserFriend.Database>.mysql)
     services.register(migrations)
 
 }
